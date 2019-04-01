@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Pokebattle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        input {
+            border: none;
+            border-bottom: 2px solid #999;
+        }
+        input:active, input:focus {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        .set {
+            border-color: mediumseagreen;
+        }
+        .left, .right {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #999;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pokemon Battle</h1>
+
+    <fieldset>
+        <legend>Player1</legend>
+        <input type="text" id="player1" placeholder="player 1">
+        <button id="player1ready">Set Name</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>Player2</legend>
+        <input type="text" id="player2" placeholder="player 2">
+        <button id="player2ready">Set Name</button>
+    </fieldset>
+
+    <button id="battle">Let's Battle</button>
+
+    <div id="battlefield">
+    </div>
+
+    <script>
+
+        const player1 = {};
+        const player2 = {};
+
+        // console.log($);
+
+        // function getPokemon(cb){
+        //     let id = Math.floor(150*Math.random()) + 1
+        //     $.get(`https://pokeapi.co/api/v2/pokemon/${id}`, function(pokemon){
+        //         cb(pokemon);
+        //     }, "json");
+        // }
+
+        function getPokemon(cb){
+            let id = Math.floor(150*Math.random()) + 1;
+            axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
+                .then(data => {
+                    cb(data.data);
+                }).catch(errors => {
+                    console.log("Something went wrong", errors);
+                    cb(null);
+                });
+        }
+
+        $("#player1ready").click(function(){
+            player1.name = $("#player1").val();
+            getPokemon(function(pokemon){
+                player1.pokemon = pokemon;
+                // console.log(player1);
+            });
+            $("#player1").addClass("set");
+        });
+
+        $("#player2ready").click(function(){
+            player2.name = $("#player2").val();
+            getPokemon(function(pokemon){
+                player2.pokemon = pokemon;
+                // console.log(player2);
+            });
+            $("#player2").addClass("set");
+        });
+
+        $("#battle").click(function(){
+            // console.log(player1, player2);
+            let s = "";
+            s += `<div class="left"><h3>${player1.name}</h3>`;
+            s += `<img src="${player1.pokemon.sprites.front_shiny}" alt="${player1.pokemon.name}"`;
+            s += `<p>${player1.pokemon.name}</p>`;
+            s += `</div>`;
+            s += `<div class="right"><h3>${player2.name}</h3>`;
+            s += `<img src="${player2.pokemon.sprites.front_shiny}" alt="${player2.pokemon.name}"`;
+            s += `<p>${player2.pokemon.name}</p>`;
+            s += `</div>`;
+            $("#battlefield").html(s);
+        });
+
+    </script>
+</body>
+</html>
